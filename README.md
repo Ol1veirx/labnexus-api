@@ -22,52 +22,105 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+### LabNexus: Sistema de Gestão de Projetos de Pesquisa Científica
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 1. Introdução
 
-## Installation
+O LabNexus é uma plataforma online desenvolvida para atender às necessidades de pesquisadores e equipes de laboratório envolvidos em projetos de pesquisa científica. Este sistema oferece uma solução abrangente e integrada para o planejamento, execução e documentação de projetos de pesquisa, visando facilitar a colaboração entre os membros da equipe, otimizar o fluxo de trabalho e promover a excelência científica.
 
-```bash
-$ npm install
-```
+## 2. Objetivos
 
-## Running the app
+- Desenvolver uma plataforma centralizada para gestão de projetos de pesquisa científica.
+- Permitir o planejamento detalhado de projetos, incluindo definição de objetivos, escopo, cronograma e recursos.
+- Facilitar a colaboração entre membros da equipe, promovendo a comunicação eficiente e compartilhamento de informações.
+- Oferecer ferramentas para o registro e rastreamento de amostras de laboratório, bem como a análise de dados experimentais.
+- Garantir a segurança e integridade dos dados de pesquisa, com medidas robustas de controle de acesso e privacidade.
 
-```bash
-# development
-$ npm run start
+## 3. Estrutura de Dados
 
-# watch mode
-$ npm run start:dev
+O LabManager utiliza uma estrutura de dados flexível e escalável para armazenar e organizar informações relacionadas aos projetos de pesquisa, membros da equipe, amostras de laboratório, dados experimentais e outros aspectos relevantes, agora incluindo a entidade "User" para gerenciar contas de usuário e permissões de acesso. Abaixo estão as entidades principais e seus respectivos atributos:
 
-# production mode
-$ npm run start:prod
-```
+# Entidades e Atributos:
 
-## Test
+User:
+- ID: Identificador único do usuário (chave primária)
+- Nome: Nome completo do usuário
+- E-mail: Endereço de e-mail do usuário (usado como identificador de login)
+- Senha: Senha criptografada para acesso à conta do usuário
+- Projetos: Lista de projetos criados pelo usuário
+- Amostras: Lista de amostras associadas ao usuário
+- Experimentos: Lista de experimentos realizados pelo usuário
 
-```bash
-# unit tests
-$ npm run test
+Projeto:
+- ID: Identificador único do projeto (chave primária)
+- Título: Título do projeto de pesquisa
+- Descrição: Descrição detalhada do projeto
+- Objetivos: Objetivos específicos do projeto
+- Escopo: Escopo do projeto, delimitando suas atividades e áreas de atuação
+- Cronograma: Cronograma de atividades e marcos do projeto
+- Status: Status atual do projeto (ativo, concluído, em andamento, etc.)
+- ID do Usuário: ID do usuário que criou o projeto (chave estrangeira)
 
-# e2e tests
-$ npm run test:e2e
+Membro:
+- ID: Identificador único do membro (chave primária)
+- Nome: Nome completo do membro da equipe
+- Cargo: Cargo ou função desempenhada pelo membro no projeto
+- Área de Atuação: Área de especialização ou expertise do membro
+- E-mail: Endereço de e-mail do membro
+- Telefone: Número de telefone do membro
+- Projeto Associado: Projeto ao qual o membro está associado (chave estrangeira)
 
-# test coverage
-$ npm run test:cov
-```
 
-## Support
+Amostra:
+- ID: Identificador único da amostra (chave primária)
+- Identificador: Identificador único da amostra no laboratório
+- Descrição: Descrição detalhada da amostra, incluindo origem e características
+- Localização: Localização física da amostra no laboratório
+- Status: Status atual da amostra (disponível, em uso, descartada, etc.)
+- ID do Usuário: ID do usuário que registrou a amostra (chave estrangeira)
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Experimento:
+- ID: Identificador único do experimento (chave primária)
+- Título: Título ou nome do experimento
+- Descrição: Descrição detalhada do experimento, incluindo metodologia e objetivos
+- Dados Experimentais: Dados obtidos durante o experimento, armazenados em formato adequado (por exemplo, arquivos de texto, planilhas, imagens)
+- Resultados: Resultados obtidos a partir da análise dos dados experimentais
+- Análises Adicionais: Análises complementares realizadas após o experimento
+- ID do Usuário: ID do usuário que realizou o experimento (chave estrangeira)
 
-## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## 4. Casos de Uso
 
-## License
+# Caso de Uso 1: Criar Projeto de Pesquisa
+Descrição:
+Este caso de uso permite que um pesquisador crie um novo projeto de pesquisa no sistema, inserindo informações detalhadas sobre o projeto.
 
-Nest is [MIT licensed](LICENSE).
+Ator Principal:
+Pesquisador
+
+Fluxo Básico:
+1. O pesquisador acessa a interface do LabManager e seleciona a opção de criar um novo projeto.
+2. O pesquisador preenche um formulário com informações sobre o projeto, como título, descrição, objetivos, escopo e cronograma.
+3. O pesquisador confirma os detalhes do projeto e finaliza o processo de criação.
+
+Extensões:
+- Se o pesquisador desejar adicionar membros da equipe ao projeto, ele pode convidá-los através do sistema.
+Caso de Uso 2: Registrar Amostra de Laboratório
+
+Descrição:
+Este caso de uso permite que um membro da equipe registre uma nova amostra de laboratório no sistema, associando-a a um projeto específico.
+
+Ator Principal:
+Membro da Equipe
+
+Fluxo Básico:
+1. O membro da equipe acessa a interface do LabManager e seleciona o projeto ao qual a amostra será associada.
+2. O membro da equipe preenche um formulário com informações sobre a amostra, como
+
+ identificador, descrição, localização e status.
+3. O membro da equipe confirma os detalhes da amostra e a registra no sistema.
+
+Extensões:
+- Se a amostra exigir análises adicionais, o membro da equipe pode registrar os resultados dos experimentos realizados.
+
+
