@@ -1,0 +1,66 @@
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  password String
+  project Project[] @relation("UserProjects")
+  sample Sample[] @relation("UserSamples")
+  experiment Experiment[] @relation("UserExperiments")
+}
+
+model Project {
+  id String @id @default(uuid())
+  title String
+  description String
+  objective String
+  scope String
+  cronograma String
+  statusProject String
+  user User @relation("UserProjects", fields: [userId], references: [id])
+  userId String
+}
+
+model Sample {
+  id String @id @default(uuid())
+  identifier String
+  description String
+  location String
+  statusSample String
+  user User @relation("UserSamples", fields: [userId], references: [id])
+  userId String
+}
+
+model Member {
+  id String @id @default(uuid())
+  name String
+  office String
+  occupationArea String
+  email String
+  phone String
+  projectId String
+}
+
+model ExperimentalData {
+  id String @id @default(uuid())
+  dataUrl String
+}
+
+model Experiment {
+  id String @id @default(uuid())
+  title String
+  description String
+  experimentalDataId String 
+  result String
+  additionalAnalysis String
+  user User @relation("UserExperiments", fields: [userId], references: [id])
+  userId String
+}
