@@ -1,26 +1,93 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateExperimentDto } from './dto/create-experiment.dto';
 import { UpdateExperimentDto } from './dto/update-experiment.dto';
+import { PrismaService } from 'src/prisma.service';
+import { Experiment, Prisma } from '@prisma/client';
+import { connect } from 'http2';
+import { ExpressAdapter } from '@nestjs/platform-express';
 
 @Injectable()
 export class ExperimentService {
-  create(createExperimentDto: CreateExperimentDto) {
-    return 'This action adds a new experiment';
+  constructor(private readonly prisma: PrismaService) {}
+
+  async create(createExperimentDto: CreateExperimentDto): Promise<Experiment | Error>  {
+    try {
+      var experiment = await this.prisma.experiment.create({
+        data: createExperimentDto
+      })
+
+      return experiment;
+    }
+    catch(error) {
+      console.error("Error: ", error);
+      throw new InternalServerErrorException();
+    }
   }
 
-  findAll() {
-    return `This action returns all experiment`;
+  async findAll(): Promise<Experiment[] | Error> {
+    try {
+      var experiments = await this.prisma.experiment.findMany()
+
+      return experiments;
+    }
+    catch(error) {
+      console.error("Error: ", error)
+      throw new InternalServerErrorException()
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} experiment`;
+  async findOne(experimentId: string): Promise<Experiment | Error> {
+    try {
+      var experiment = await this.prisma.experiment.findUnique({
+        where: {
+          id: experimentId
+        }
+      })
+
+      if(!experiment) throw new NotFoundException();
+
+      return experiment
+    }
+    catch(error) {
+      console.error("Error: ", error)
+      throw new InternalServerErrorException()
+    }
   }
 
-  update(id: number, updateExperimentDto: UpdateExperimentDto) {
-    return `This action updates a #${id} experiment`;
+  async update(experimentId: string, updateExperimentDto: UpdateExperimentDto): Promise<Experiment | Error> {
+    if(experimentId != updateExperimentDto.id){
+      throw new NotFoundException()
+    }
+
+    try {
+      var experiment = await this.prisma.experiment.update({
+        where: {
+          id: experimentId
+        },
+        data: updateExperimentDto
+      })
+
+      return experiment
+    }
+    catch(error) {
+      console.error("Error: ", error)
+      throw new InternalServerErrorException()
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} experiment`;
+  async remove(experimentId: string): Promise<Experiment | Error> {
+    try {
+      const result = await this.prisma.experiment.delete({
+        where: {
+          id: experimentId
+        }
+      })
+
+      return result
+    }
+    catch(error) {
+      console.error("Error: ", error)
+      throw new InternalServerErrorException()
+    }
   }
 }

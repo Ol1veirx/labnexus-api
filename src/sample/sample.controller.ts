@@ -1,34 +1,71 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, InternalServerErrorException } from '@nestjs/common';
 import { SampleService } from './sample.service';
 import { CreateSampleDto } from './dto/create-sample.dto';
 import { UpdateSampleDto } from './dto/update-sample.dto';
+import { ApiTags } from '@nestjs/swagger';
+import { Sample } from '@prisma/client';
 
+@ApiTags("Sample")
 @Controller('sample')
 export class SampleController {
   constructor(private readonly sampleService: SampleService) {}
 
   @Post()
-  create(@Body() createSampleDto: CreateSampleDto) {
-    return this.sampleService.create(createSampleDto);
+  async create(@Body() createSampleDto: CreateSampleDto) {
+    try {
+      return await this.sampleService.create(createSampleDto);
+    }
+    catch(error) {
+      console.log("Error: ", error);
+      throw new InternalServerErrorException()
+    }
   }
 
   @Get()
-  findAll() {
-    return this.sampleService.findAll();
+  async findAll() {
+    try{
+      var samples = await this.sampleService.findAll();
+      return {success: true, data: samples}
+    }
+    catch(error) {
+      console.error("Error: ", error);
+      throw new InternalServerErrorException()
+    }
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.sampleService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    try {
+      const sample = await this.sampleService.findOne(id);
+      return { success: true, data: sample }
+    }
+    catch(error) {
+      console.error("Error: ", error)
+      throw new InternalServerErrorException()
+    }
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSampleDto: UpdateSampleDto) {
-    return this.sampleService.update(+id, updateSampleDto);
+  async update(@Param('id') id: string, @Body() updateSampleDto: UpdateSampleDto) {
+    try {
+      const updateSample = await this.sampleService.update(id, updateSampleDto);
+      return { success: true, data: updateSample }
+    }
+    catch (error) {
+      console.error("Error: ", error)
+      throw new InternalServerErrorException()
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.sampleService.remove(+id);
+  async remove(@Param('id') id: string) {
+    try{
+      const removeSample = await this.sampleService.remove(id);
+      return { success: true, data: removeSample }
+    }
+    catch(error) {
+      console.error("Error: ", error)
+      throw new InternalServerErrorException()
+    }
   }
 }

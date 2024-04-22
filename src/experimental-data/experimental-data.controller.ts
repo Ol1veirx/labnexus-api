@@ -1,15 +1,17 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ExperimentalDataService } from './experimental-data.service';
-import { CreateExperimentalDatumDto } from './dto/create-experimental-datum.dto';
-import { UpdateExperimentalDatumDto } from './dto/update-experimental-datum.dto';
+import { CreateExperimentalDataDto } from './dto/create-experimental-data.dto';
+import { UpdateExperimentalDataDto } from './dto/update-experimental-data.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags("Experimental Data")
 @Controller('experimental-data')
 export class ExperimentalDataController {
   constructor(private readonly experimentalDataService: ExperimentalDataService) {}
 
   @Post()
-  create(@Body() createExperimentalDatumDto: CreateExperimentalDatumDto) {
-    return this.experimentalDataService.create(createExperimentalDatumDto);
+  create(@Body() createExperimentalDataDto: CreateExperimentalDataDto) {
+    return this.experimentalDataService.create(createExperimentalDataDto);
   }
 
   @Get()
@@ -19,16 +21,16 @@ export class ExperimentalDataController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.experimentalDataService.findOne(+id);
+    return this.experimentalDataService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateExperimentalDatumDto: UpdateExperimentalDatumDto) {
-    return this.experimentalDataService.update(+id, updateExperimentalDatumDto);
+  update(@Param('id') id: string, @Body() updateExperimentalDataDto: UpdateExperimentalDataDto) {
+    return this.experimentalDataService.update(id, updateExperimentalDataDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.experimentalDataService.remove(+id);
+    return this.experimentalDataService.remove(id);
   }
 }
