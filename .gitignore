@@ -13,7 +13,7 @@ yarn-error.log*
 lerna-debug.log*
 
 # Auth
-constants.ts
+/src/auth/constants.ts
 
 # OS
 .DS_Store
