@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma.service';
@@ -36,6 +36,22 @@ export class UserRepository {
       }
     })
     return user;
+  }
+
+  async findUserByEmail(email: string): Promise<User> {
+    try{
+      const user = await this.prisma.user.findUnique({
+        where: {
+          email: email
+        }
+      })
+
+      return user
+    }
+    catch(error) {
+      console.error("Error", error)
+      throw new InternalServerErrorException()
+    }
   }
 
   async update(userId: string, updateUserDto: UpdateUserDto): Promise<User> {

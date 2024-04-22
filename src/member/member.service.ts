@@ -1,26 +1,95 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
+import { PrismaService } from 'src/prisma.service';
+import { Member } from '@prisma/client';
 
 @Injectable()
 export class MemberService {
-  create(createMemberDto: CreateMemberDto) {
-    return 'This action adds a new member';
+  constructor(private readonly prisma: PrismaService) {}
+
+ async create(createMemberDto: CreateMemberDto): Promise<Member  | Error> {
+    try {
+      const member = await this.prisma.member.create({
+        data: createMemberDto
+      })
+
+      return member;
+    }
+    catch(error) {
+      console.error("Error: ", error)
+      throw new InternalServerErrorException()
+    }
   }
 
-  findAll() {
-    return `This action returns all member`;
+  async findAll(): Promise<Member[]  | Error> {
+    try {
+      const members = await this.prisma.member.findMany();
+      return members
+    }
+    catch(error) {
+      console.error("Error: ", error)
+      throw new InternalServerErrorException()
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} member`;
+  async findOne(memberId: string): Promise<Member | Error> {
+    try {
+      const member = await this.prisma.member.findUnique({
+        where: {
+          id: memberId
+        }
+      })
+      return member
+    }
+    catch(error) {
+      console.error("Error: ", error)
+      throw new InternalServerErrorException()
+    }
   }
 
-  update(id: number, updateMemberDto: UpdateMemberDto) {
-    return `This action updates a #${id} member`;
+  async update(memberId: string, updateMemberDto: UpdateMemberDto): Promise<Member | Error> {
+    if(memberId != updateMemberDto.id){
+      throw new NotFoundException()
+    }
+
+    try {
+      const member = await this.prisma.member.update({
+        where: {
+          id: memberId
+        },
+        data: updateMemberDto
+      })
+
+      return member
+    }
+    catch(error) {
+      console.error("Error: ", error)
+      throw new InternalServerErrorException()
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} member`;
+  async remove(memberId: string): Promise<Member | Error> {
+    try {
+      const result = await this.prisma.member.findUnique({
+        where: {
+          id: memberId
+        }
+      })
+
+      if(!result){
+        throw new NotFoundException()
+      }
+
+      return await this.prisma.member.delete({
+        where: {
+          id: memberId
+        }
+      })
+    }
+    catch(error) {
+      console.error("Error: ", error)
+      throw new InternalServerErrorException()
+    }
   }
 }

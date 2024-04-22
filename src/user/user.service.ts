@@ -20,6 +20,10 @@ export class UserService {
     return await this.userRepository.findOne(userId);
   }
 
+  async findUserByEmail(email: string): Promise<User> {
+    return await this.userRepository.findUserByEmail(email);
+  }
+
   async update(userId: string, updateUserDto: UpdateUserDto): Promise<User> {
     return await this.userRepository.update(userId, updateUserDto);
   }
